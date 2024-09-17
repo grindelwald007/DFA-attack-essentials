@@ -10,12 +10,12 @@ class BinaryMatrix:
     def xor(self, a, b):
         return a ^ b
 
-    def matrix_multiply_gf2(self, A, B):
-        result = np.zeros_like(A)
-        for i in range(A.shape[0]):
-            for j in range(B.shape[1]):
-                for k in range(A.shape[1]):
-                    result[i, j] ^= A[i, k] & B[k, j]
+    def matrix_multiply_gf2(self, a, b):
+        result = np.zeros_like(a)
+        for i in range(a.shape[0]):
+            for j in range(b.shape[1]):
+                for k in range(a.shape[1]):
+                    result[i, j] ^= a[i, k] & b[k, j]
         return result
 
     def find_inverse(self):

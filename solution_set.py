@@ -1,5 +1,5 @@
 from binary_matrix import BinaryMatrix
-from e1_image_set import generate_mapping as getE1, gf_mult as gf_mult, inverse_gf2m_field as gf_inverse
+from e1_image_set import generate_mapping as get_e1, gf_mult as gf_mult, inverse_gf2m_field as gf_inverse
 import numpy as np
 
 A = np.array([
@@ -13,13 +13,14 @@ A = np.array([
     [0, 0, 0, 1, 1, 1, 1, 1]
 ])
 
-E1 = getE1()
+E1 = get_e1()
 
 class MatrixOperations:
     def __init__(self):
         self.binary_matrix = BinaryMatrix(A)
-        E1.remove('0x0')
         self.E1 = list(set(E1))
+        self.E1.remove('0x0')
+        print(sorted(self.E1))
         
     def hex_to_binary_list(self, hex_string):
         integer_value = int(hex_string, 16)
@@ -34,6 +35,10 @@ class MatrixOperations:
         try:
             # Find the inverse of the matrix
             a_inverse = self.binary_matrix.find_inverse()
+            
+            if self.binary_matrix.verify_inverse()[0]:
+                
+                raise ValueError("Error in A_INVERSE calculation")
             
             # Multiply the inverse matrix with epsilon
             res_1 = self.binary_matrix.custom_multiply(a_inverse, epsilon)

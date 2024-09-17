@@ -75,7 +75,7 @@ def exp(a, k):
 def gmul(a, b):
     # Galois Field multiplication
     p = 0
-    for i in range(8):
+    for _ in range(8):
         if b & 1:
             p ^= a
         hi_bit_set = a & 0x80

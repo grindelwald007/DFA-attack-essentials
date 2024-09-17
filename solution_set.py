@@ -1,5 +1,5 @@
 from binary_matrix import BinaryMatrix
-from generateE1ImageSet import generateMapping as getE1, gf_mult as gf_mult, inverse_gf2m_field as gf_inverse
+from e1_image_set import generate_mapping as getE1, gf_mult as gf_mult, inverse_gf2m_field as gf_inverse
 import numpy as np
 
 A = np.array([

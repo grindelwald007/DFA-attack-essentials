@@ -20,7 +20,7 @@ def gf_calculate(x):
     # f(x) = x^2 + x (which is just x_squared ^ x in GF(2^8))
     return x_squared ^ x
 
-def generateMapping():
+def generate_mapping():
     i = 0
     list_of_pairs = []
     while i <= 255 :
@@ -86,7 +86,7 @@ def gmul(a, b):
     return p % FIELD_SIZE
     
 
-generateMapping()
+generate_mapping()
 
 # print(f"gmul(123, 213) {gmul(123, 213)}" )
 

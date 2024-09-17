@@ -47,7 +47,7 @@ def generate_mapping():
         hex_pair = (hex(pair[0]), hex(pair[1]))
         # print(hex_pair)
         E1.append(hex_pair[1])
-    return E1
+    return E1, list_of_pairs
     
 def inverse_gf2m_field(a):
     d = FIELD_SIZE - 2
@@ -86,7 +86,7 @@ def gmul(a, b):
     return p % FIELD_SIZE
     
 
-generate_mapping()
+# generate_mapping()
 
 # print(f"gmul(123, 213) {gmul(123, 213)}" )
 

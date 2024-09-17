@@ -13,14 +13,14 @@ A = np.array([
     [0, 0, 0, 1, 1, 1, 1, 1]
 ])
 
-E1 = get_e1()
+E1 = get_e1()[0]
 
 class MatrixOperations:
     def __init__(self):
         self.binary_matrix = BinaryMatrix(A)
         self.E1 = list(set(E1))
         self.E1.remove('0x0')
-        print(sorted(self.E1))
+        # print(sorted([int(_, 16) for _ in self.E1]))
         
     def hex_to_binary_list(self, hex_string):
         integer_value = int(hex_string, 16)
@@ -36,7 +36,7 @@ class MatrixOperations:
             # Find the inverse of the matrix
             a_inverse = self.binary_matrix.find_inverse()
             
-            if self.binary_matrix.verify_inverse()[0]:
+            if not self.binary_matrix.verify_inverse()[0]:
                 
                 raise ValueError("Error in A_INVERSE calculation")
             
@@ -50,7 +50,7 @@ class MatrixOperations:
             
             # Perform the field multiplication
             res_2 = gf_mult(c, res_1_int)
-            # print("c.(a_1*ε) gmul : ", res_2)``
+            print(f"{c}.(a_1*{epsilon}) gmul : {hex(res_2)}")
             
             set_s = set()
             
@@ -65,6 +65,23 @@ class MatrixOperations:
         except ValueError as e:
             print(f"Error: {e}")
 
+
+    def trial_compute_set(self, hex_num):
+        set_s = set()
+            
+        for e in self.E1:
+            res_3 = gf_mult(int(e, 16), int(hex_num, 16))
+            res_4 = gf_inverse(res_3)
+            set_s.add(hex(res_4))
+            # print(f"e : {e} | (c.(a_1*ε).e)_1 : {res_4}")
+                
+        return set_s
+    
+    def find_solve(self, search_value):
+        pairs = get_e1()[1]
+        result = [hex(first) for first, second in pairs if second == search_value]
+        return result
+        
 # Example usage
 # epsilon_in_hex = 'E7'
 # c = 2

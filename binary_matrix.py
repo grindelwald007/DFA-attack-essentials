@@ -55,3 +55,23 @@ class BinaryMatrix:
         else:
             return False, product
 
+    def custom_multiply(self, matrix, vector):
+        # if matrix.shape != (8, 8) or vector.shape != (8, 1):
+        #     raise ValueError("Matrix must be 8x8 and vector must be 8x1.")
+    
+        result = np.zeros(8, dtype=int)
+    
+        for i in range(8):
+            temp_result = 0
+            for j in range(8):
+                temp_result = temp_result ^ (matrix[i, j] & vector[j])
+            result[i] = temp_result
+    
+        return result
+    
+    def bin_arr_to_hex(self, binary_list):
+        binary_string = ''.join(map(str, binary_list))
+        decimal_value = int(binary_string, 2)
+        hex_value = hex(decimal_value)
+        return (decimal_value, hex_value)
+

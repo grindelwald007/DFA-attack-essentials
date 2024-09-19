@@ -21,7 +21,10 @@ class MatrixOperations:
         self.E1 = list(set(E1))
         self.E1.remove('0x0')
         # print(sorted([int(_, 16) for _ in self.E1]))
-        
+    
+    def get_e1_star_list(self):
+        return self.E1
+    
     def hex_to_binary_list(self, hex_string):
         integer_value = int(hex_string, 16)
         binary_string = bin(integer_value)[2:]

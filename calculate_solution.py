@@ -1,9 +1,7 @@
-from solution_set import MatrixOperations
-from Crypto.Cipher import AES
-from e1_image_set import gf_mult as gf_mult
-
-def get_sbox_val(val):
-    return Sbox[val]
+from solution_set import MatrixOperations, A as A
+from e1_image_set import gf_mult as gf_mult, inverse_gf2m_field as gf_inv
+from binary_matrix import BinaryMatrix
+import numpy as np
 
 Sbox = (    
             0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76,
@@ -23,51 +21,86 @@ Sbox = (
             0xE1, 0xF8, 0x98, 0x11, 0x69, 0xD9, 0x8E, 0x94, 0x9B, 0x1E, 0x87, 0xE9, 0xCE, 0x55, 0x28, 0xDF,
             0x8C, 0xA1, 0x89, 0x0D, 0xBF, 0xE6, 0x42, 0x68, 0x41, 0x99, 0x2D, 0x0F, 0xB0, 0x54, 0xBB, 0x16
         )
+
+def get_sbox_val(val):
+    return Sbox[val]
+
+def is_theta_element_of_e1(theta):
+    mo = MatrixOperations()
+    e1_star = mo.get_e1_star_list()
+    if theta in e1_star:
+        return True
+    else:
+        return False
+
+
 set_1 = {}
 set_2 = {}
 set_3 = {}
 set_4 = {}
 
 mo = MatrixOperations()
-# set_1 = mo.compute_set(2, "E7")
-# set_2 = mo.compute_set(1, "51")
+# Sc,ε0 = {(c.(a−1 ∗ ε0).e)−1, e ∈ E1}
 
-# set_3 = mo.compute_set(1, "47")
-# set_4 = mo.compute_set(3, "99")
+set_1 = mo.compute_set(2, "e7")
+set_2 = mo.compute_set(1, "51")
+set_3 = mo.compute_set(1, "47")
+set_4 = mo.compute_set(3, "99")
 
 set_1 = mo.trial_compute_set("0x12")
-set_2 = mo.trial_compute_set("0x7c")
-set_3 = mo.trial_compute_set("0x65")
-set_4 = mo.trial_compute_set("0xb0")
+# set_2 = mo.trial_compute_set("0x7c")
+# set_3 = mo.trial_compute_set("0x65")
+# set_4 = mo.trial_compute_set("0xb0")
+
+intersection = set_1.intersection(set_2, set_3, set_4)
+s_intersec = sorted(intersection)
 
 # print(f"len(set_1) : {len(set_1)}")
-intersection = set_1.intersection(set_2, set_3, set_4)
-# print(f"len(sorted(intersection)) 
-
 # print(sorted(set_1))
-
-s_intersec = sorted(intersection)
+# print(f"len(s_intersec) {len(s_intersec)}") 
+# print(s_intersec) 
 
 result = []
 
-for ep in s_intersec:
-    alphas = mo.find_solve(int(ep, 16))
+epsilon_prime = 0xe7
+c = 2
+
+
+for epsilon in s_intersec:
+    # θ = ((a−1 ∗ε0).c.ε)−1 ∈ E∗
+    
+    a_inv_mul_epsilon_prime_dot_c = int('0x12',16)
+    epsilon_int = int(epsilon, 16)
+    res1 = gf_mult(a_inv_mul_epsilon_prime_dot_c, epsilon_int)
+    theta = gf_inv(res1)
+    
+    if is_theta_element_of_e1(theta):
+        raise ValueError(f"Theta value {theta} is an element of E1* and is not allowed.")
+
+    # print(f"theta {hex(theta)} epsilon {epsilon}")
+
+    # find solve for t : t^2 + t = θ; solves, alpha and beta
+    
+    alphas = mo.find_solve(theta)
     if len(alphas) != 0:
-        if int(ep, 16) != 1:
-            gmul_c_ep = gf_mult(2, int(ep, 16))
-            res1 = get_sbox_val(gf_mult(gmul_c_ep, int(alphas[0], 16))) ^ 0xde
-            res2 = get_sbox_val(gf_mult(gmul_c_ep, int(alphas[1], 16))) ^ 0xde
-            result.append(hex(res1) if res1>=0x10 else f'0x{res1:02x}')
-            result.append(hex(res2) if res2>=0x10 else f'0x{res2:02x}')
-        elif int(ep, 16) == 1:
-            continue
-            
-# search value 0x1e alphas ['0xa8', '0xa9']
-
-gmul_c_ep = gf_mult(2, int('0x1e' ,16))
-res1 = get_sbox_val(gf_mult(gmul_c_ep, int('0xa8', 16))) ^ 0xde
-res2 = get_sbox_val(gf_mult(gmul_c_ep, int('0xa9', 16))) ^ 0xde
-
-print(f"res1 {hex(res1)} res2 {hex(res2)}")
+        faultyState_Nr_A_i = 0xde
+        gmul_c_epsilon = gf_mult(c, epsilon_int)
+        s_c_epsilon_alpha = get_sbox_val(gf_mult(gmul_c_epsilon, int(alphas[0], 16)))
+        s_c_epsilon_beta = get_sbox_val(gf_mult(gmul_c_epsilon, int(alphas[1], 16)))
+        
+        # s(c.ε.α) + F_Nr,A[i] or,  s(c.ε.β) + F_Nr,A[i]
+        res1 = s_c_epsilon_alpha ^ faultyState_Nr_A_i
+        res2 = s_c_epsilon_beta ^ faultyState_Nr_A_i
+        
+        result.append(hex(res1) if res1>=0x10 else f'0x{res1:02x}')
+        result.append(hex(res2) if res2>=0x10 else f'0x{res2:02x}')
+        
+        if theta == 1:
+            b = 0x63
+            res3 = int(b,16) ^ faultyState_Nr_A_i
+            result.append(hex(res3) if res3>=0x10 else f'0x{res3:02x}')
+            s_c_epsilon = get_sbox_val(gmul_c_epsilon)
+            res4 = s_c_epsilon ^ faultyState_Nr_A_i
+            result.append(hex(res4) if res4>=0x10 else f'0x{res4:02x}')
 
 print(f"final result : {sorted(result)}")

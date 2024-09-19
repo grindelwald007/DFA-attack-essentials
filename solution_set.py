@@ -13,6 +13,17 @@ A = np.array([
     [0, 0, 0, 1, 1, 1, 1, 1]
 ])
 
+A_INV = np.array([
+    [0, 0, 1, 0, 0, 1, 0, 1],
+    [1, 0, 0, 1, 0, 0, 1, 0],
+    [0, 1, 0, 0, 1, 0, 0, 1],
+    [1, 0, 1, 0, 0, 1, 0, 0],
+    [0, 1, 0, 1, 0, 0, 1, 0],
+    [0, 0, 1, 0, 1, 0, 0, 1],
+    [1, 0, 0, 1, 0, 1, 0, 0],
+    [0, 1, 0, 0, 1, 0, 1, 0]
+])
+
 E1 = get_e1()[0]
 
 class MatrixOperations:
@@ -25,35 +36,45 @@ class MatrixOperations:
     def get_e1_star_list(self):
         return self.E1
     
-    def hex_to_binary_list(self, hex_string):
+    @staticmethod
+    def hex_to_binary_list(hex_string):
         integer_value = int(hex_string, 16)
-        binary_string = bin(integer_value)[2:]
-        binary_string = binary_string.zfill(len(hex_string) * 4)
+        if integer_value < 0 or integer_value > 255:
+            raise ValueError("Value outside GF(2^8) field")
+
+        binary_string = bin(integer_value)[2:].zfill(8)
         binary_list = [int(bit) for bit in binary_string]
         return binary_list
 
+
     def compute_set(self, c, epsilon_hex):
-        epsilon = self.hex_to_binary_list(epsilon_hex)
+        # reversing is done . See epsilon_calculator.py
+        epsilon_hex = epsilon_hex[::-1]
+        
+        epsilon = MatrixOperations.hex_to_binary_list(epsilon_hex)
         
         try:
             # Find the inverse of the matrix
-            a_inverse = self.binary_matrix.find_inverse()
+            # a_inverse = self.binary_matrix.find_inverse()
+            a_inverse = A_INV
             
-            if not self.binary_matrix.verify_inverse()[0]:
-                
+            is_identity, identity_matrix = BinaryMatrix.verify_inverse(A, A_INV)
+            
+            if not is_identity:
                 raise ValueError("Error in A_INVERSE calculation")
-            
+            # else :
+                # print(f"Identity Matrix Success \n {identity_matrix}")
             # Multiply the inverse matrix with epsilon
-            res_1 = self.binary_matrix.custom_multiply(a_inverse, epsilon)
+            res_1 = BinaryMatrix.custom_multiply(a_inverse, np.array(epsilon).reshape(8, 1))
             
             # Convert the result to integer and hexadecimal
-            res_1_int, _ = self.binary_matrix.bin_arr_to_hex(res_1)
+            res_1_int, _ = BinaryMatrix.bin_arr_to_hex(res_1)
             # print("(a_1*ε) in hex : ", _)
             # print("(a_1*ε) in int : ", res_1_int)
             
             # Perform the field multiplication
             res_2 = gf_mult(c, res_1_int)
-            print(f"{c}.(a_1*{epsilon}) gmul : {hex(res_2)}")
+            # print(f"{c}.(a_1*{epsilon}) gmul : {hex(res_2)}")
             
             set_s = set()
             
@@ -69,6 +90,8 @@ class MatrixOperations:
             print(f"Error: {e}")
 
 
+    
+    @DeprecationWarning
     def trial_compute_set(self, hex_num):
         set_s = set()
             

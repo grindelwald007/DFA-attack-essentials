@@ -31,21 +31,15 @@ def generate_mapping():
             if x < 0 or x > 0xFF:
                 print("Please enter a valid 8-bit hexadecimal value (00 to FF).")
                 continue
-        
-            # Calculate f(x)
             fx = gf_calculate(x)
             new_pair = (x, fx)
             list_of_pairs.append(new_pair)
-            # Print x and f(x) in hexadecimal format
-            # print(f"x = 0x{x:02X}")
-            # print(f"f(x) = 0x{fx:02X}")
         except ValueError:
             print("Invalid input. Please enter a valid hexadecimal number.")
     
     E1 = []
     for pair in list_of_pairs:
         hex_pair = (hex(pair[0]), hex(pair[1]))
-        # print(hex_pair)
         E1.append(hex_pair[1])
     return E1, list_of_pairs
     
@@ -85,9 +79,3 @@ def gmul(a, b):
         b >>= 1
     return p % FIELD_SIZE
     
-
-# generate_mapping()
-
-# print(f"gmul(123, 213) {gmul(123, 213)}" )
-
-# print(f"gf_mult(123, 213) {gf_mult(123, 213)}" )

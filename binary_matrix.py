@@ -7,10 +7,12 @@ class BinaryMatrix:
         self.matrix = matrix
         self.inverse = None
 
-    def xor(self, a, b):
+    @staticmethod
+    def xor(a, b):
         return a ^ b
 
-    def matrix_multiply_gf2(self, a, b):
+    @staticmethod
+    def matrix_multiply_gf2(a, b):
         result = np.zeros_like(a)
         for i in range(a.shape[0]):
             for j in range(b.shape[1]):
@@ -34,13 +36,13 @@ class BinaryMatrix:
                     raise ValueError("Matrix is not invertible")
             for j in range(i+1, n):
                 if augmented[j, i] == 1:
-                    augmented[j] = self.xor(augmented[j], augmented[i])
+                    augmented[j] = BinaryMatrix.xor(augmented[j], augmented[i])
 
         # Back-substitution
         for i in range(n-1, 0, -1):
             for j in range(i):
                 if augmented[j, i] == 1:
-                    augmented[j] = self.xor(augmented[j], augmented[i])
+                    augmented[j] = BinaryMatrix.xor(augmented[j], augmented[i])
 
         self.inverse = augmented[:, n:]
         return self.inverse
@@ -49,15 +51,24 @@ class BinaryMatrix:
         if self.inverse is None:
             raise ValueError("Inverse not computed yet. Call find_inverse() first.")
 
-        product = self.matrix_multiply_gf2(self.matrix, self.inverse)
+        product = BinaryMatrix.matrix_multiply_gf2(self.matrix, self.inverse)
+        if np.array_equal(product, np.eye(8, dtype=int)):
+            return True, product
+        else:
+            return False, product
+        
+    @staticmethod
+    def verify_inverse(a_matrix, a_inv_matrix):
+        product = BinaryMatrix.matrix_multiply_gf2(a_matrix, a_inv_matrix)
         if np.array_equal(product, np.eye(8, dtype=int)):
             return True, product
         else:
             return False, product
 
-    def custom_multiply(self, matrix, vector):
-        # if matrix.shape != (8, 8) or vector.shape != (8, 1):
-        #     raise ValueError("Matrix must be 8x8 and vector must be 8x1.")
+    @staticmethod
+    def custom_multiply(matrix, vector):
+        if matrix.shape != (8, 8) or vector.shape != (8, 1):
+            raise ValueError("Matrix must be 8x8 and vector must be 8x1.")
     
         result = np.zeros(8, dtype=int)
     
@@ -69,7 +80,8 @@ class BinaryMatrix:
     
         return result
     
-    def bin_arr_to_hex(self, binary_list):
+    @staticmethod
+    def bin_arr_to_hex(binary_list):
         binary_string = ''.join(map(str, binary_list))
         decimal_value = int(binary_string, 2)
         hex_value = hex(decimal_value)

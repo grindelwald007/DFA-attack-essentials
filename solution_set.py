@@ -90,7 +90,6 @@ class MatrixOperations:
             print(f"Error: {e}")
 
 
-    
     @DeprecationWarning
     def trial_compute_set(self, hex_num):
         set_s = set()

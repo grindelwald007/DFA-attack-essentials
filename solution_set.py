@@ -47,25 +47,25 @@ class MatrixOperations:
         return binary_list
 
 
-    def compute_set(self, c, epsilon_hex):
+    def compute_set(self, c, epsilon_prime_hex):
         # reversing is done . See epsilon_calculator.py
-        epsilon_hex = epsilon_hex[::-1]
+        epsilon_prime_hex = epsilon_prime_hex[::-1]
         
-        epsilon = MatrixOperations.hex_to_binary_list(epsilon_hex)
+        epsilon_prime = MatrixOperations.hex_to_binary_list(epsilon_prime_hex)
         
         try:
             # Find the inverse of the matrix
             # a_inverse = self.binary_matrix.find_inverse()
             a_inverse = A_INV
             
-            is_identity, identity_matrix = BinaryMatrix.verify_inverse(A, A_INV)
+            is_identity, _ = BinaryMatrix.verify_inverse(A, A_INV)
             
             if not is_identity:
                 raise ValueError("Error in A_INVERSE calculation")
             # else :
                 # print(f"Identity Matrix Success \n {identity_matrix}")
-            # Multiply the inverse matrix with epsilon
-            res_1 = BinaryMatrix.custom_multiply(a_inverse, np.array(epsilon).reshape(8, 1))
+            # Multiply the inverse matrix with epsilon prime
+            res_1 = BinaryMatrix.custom_multiply(a_inverse, np.array(epsilon_prime).reshape(8, 1))
             
             # Convert the result to integer and hexadecimal
             res_1_int, _ = BinaryMatrix.bin_arr_to_hex(res_1)

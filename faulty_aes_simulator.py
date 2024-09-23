@@ -96,9 +96,9 @@ class AesSimulator:
         hex_matrix = np.vectorize(lambda x: hex(x))(matrix)
         return hex_matrix
 
-def get_enc_with_fault():
+def get_enc_with_fault(fault, row, col):
     aes_1 = AesSimulator(SR_9.copy())
-    aes_1.inject_fault(0x1e, 0, 0)
+    aes_1.inject_fault(fault, row, col)
     aes_1.mix_columns()
     aes_1.add_key(K_9)
     aes_1.sub_bytes()
@@ -115,8 +115,8 @@ def get_enc_without_fault():
     result = aes_2.add_key(K_10)
     return result
 
-def get_differential_faults():
-    state_faulty = get_enc_with_fault()
+def get_differential_faults(fault, row, col):
+    state_faulty = get_enc_with_fault(fault, row, col)
     # print(f"state_faulty \n{AesSimulator.matrix_to_hex(state_faulty)}\n")
     
     state_correct = get_enc_without_fault()
@@ -133,6 +133,4 @@ def get_differential_faults():
                 res.append((hex(state_error[i, j]), (i, j)))
             
     # print(f"state_error \n{AesSimulator.matrix_to_hex(state_error)}\n")
-    return res
-    
-print(get_differential_faults())
+    return res, state_faulty[0,0]

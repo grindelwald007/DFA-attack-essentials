@@ -33,7 +33,7 @@ def is_theta_element_of_e1(theta):
     else:
         return False
 
-def calculate_key_candidates(ep_1, ep_2, ep_3, ep_4, f_Nr_A_0):
+def calculate_key_candidates(ep_1, ep_2, ep_3, ep_4, f_nr_a0):
     set_1 = {}
     set_2 = {}
     set_3 = {}
@@ -76,31 +76,28 @@ def calculate_key_candidates(ep_1, ep_2, ep_3, ep_4, f_Nr_A_0):
         if is_theta_element_of_e1(theta):
             raise ValueError(f"Theta value {theta} is not an element of E1* and is not allowed.")
 
-        # print(f"theta {hex(theta)} epsilon {epsilon}")
-
         # find solve for t : t^2 + t = θ; solves, alpha and beta
     
         alphas = mo.find_solve(theta)
         if len(alphas) != 0:
-            # faultyState_Nr_A_i = 0xde
-            faultyState_Nr_A_i = f_Nr_A_0
+            faulty_state_nr_a_0 = f_nr_a0
             gmul_c_epsilon = gf_mult(c, epsilon_int)
             s_c_epsilon_alpha = get_sbox_val(gf_mult(gmul_c_epsilon, int(alphas[0], 16)))
             s_c_epsilon_beta = get_sbox_val(gf_mult(gmul_c_epsilon, int(alphas[1], 16)))
         
             # s(c.ε.α) + F_Nr,A[i] or,  s(c.ε.β) + F_Nr,A[i]
-            res1 = s_c_epsilon_alpha ^ faultyState_Nr_A_i
-            res2 = s_c_epsilon_beta ^ faultyState_Nr_A_i
+            res1 = s_c_epsilon_alpha ^ faulty_state_nr_a_0
+            res2 = s_c_epsilon_beta ^ faulty_state_nr_a_0
         
             result.append(hex(res1) if res1>=0x10 else f'0x{res1:02x}')
             result.append(hex(res2) if res2>=0x10 else f'0x{res2:02x}')
         
             if theta == 1:
                 b = 0x63
-                res3 = b ^ faultyState_Nr_A_i
+                res3 = b ^ faulty_state_nr_a_0
                 result.append(hex(res3) if res3>=0x10 else f'0x{res3:02x}')
                 s_c_epsilon = get_sbox_val(gmul_c_epsilon)
-                res4 = s_c_epsilon ^ faultyState_Nr_A_i
+                res4 = s_c_epsilon ^ faulty_state_nr_a_0
                 result.append(hex(res4) if res4>=0x10 else f'0x{res4:02x}')
 
     # print(f"final result : {sorted(result)}")

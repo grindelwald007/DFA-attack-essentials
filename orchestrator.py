@@ -3,7 +3,7 @@ import faulty_aes_simulator as df
 
 
 def calc_k_0_0_10_key(fault):
-    dif_fault_list, f_Nr_A_0 = df.get_differential_faults(fault, 0, 0)
+    dif_fault_list, f_nr_a0 = df.get_differential_faults(fault, 0, 0)
     ep0 = 0
     ep1 = 0
     ep2 = 0
@@ -19,7 +19,7 @@ def calc_k_0_0_10_key(fault):
         elif row == 3 and col == 1:
             ep3 = ep.replace("0x", "").zfill(2)
 
-    return kc.calculate_key_candidates(ep0, ep1, ep2, ep3, f_Nr_A_0)
+    return kc.calculate_key_candidates(ep0, ep1, ep2, ep3, f_nr_a0)
 
 list_1 = calc_k_0_0_10_key(0x1e)
 # print(f"list_1 {list_1}\n")

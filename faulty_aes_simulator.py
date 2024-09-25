@@ -133,4 +133,4 @@ def get_differential_faults(fault, row, col):
                 res.append((hex(state_error[i, j]), (i, j)))
             
     # print(f"state_error \n{AesSimulator.matrix_to_hex(state_error)}\n")
-    return res, state_faulty[0,0]
+    return res, state_faulty

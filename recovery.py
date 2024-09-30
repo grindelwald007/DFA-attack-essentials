@@ -75,7 +75,7 @@ def recover_key(final_key, Nk=4):
 
 
 # Column major order
-# final key = []
+# final key = [ insert key ]
 
 final_key = read_array_from_file("keys/Key_10.txt")
 Nk = 4 

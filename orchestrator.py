@@ -1,7 +1,7 @@
 import os, logging
 import numpy as np
-import calculate_key_candidates as kc, faulty_aes_simulator as df
-
+import calculate_key_candidates as kc, faulty_aes_simulator as df1
+import faulty_aes as df2
 
 log_folder = 'logs'
 
@@ -16,6 +16,7 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S'
 )
+
 
 def get_faulty_enc_state_value(faulty_enc_state, key_pos):
     if key_pos == 0:
@@ -55,7 +56,13 @@ def get_faulty_enc_state_value(faulty_enc_state, key_pos):
 
 
 def calc_k_10_key_candidates(fault, key_pos, fault_col, fault_row = 0):
-    dif_fault_list, faulty_enc_state = df.get_differential_faults(fault, fault_row, fault_col)
+    dif_fault_list, faulty_enc_state = df1.get_differential_faults(fault, fault_row, fault_col)
+    
+    logging.debug(f"{fault}, {fault_row}, {fault_col} ")
+    
+    # dif_fault_list, faulty_enc_state = df2.get_differential_faults(fault, 
+    # fault_row, fault_col)
+    
     ep = ['00', '00', '00', '00']  # Initialize ep array with default values
 
     f_nr_a_i = get_faulty_enc_state_value(faulty_enc_state, key_pos)
@@ -108,7 +115,7 @@ def get_k_10_single_byte(fault_lists, key_pos):
     # logging.debug(set_1.intersection(set_2))
     # logging.debug(set_1.intersection(set_2, set_3))
     # logging.debug(set_1.intersection(set_2, set_3, set_4))
-    logging.debug(f"Key[10][{key_pos}]={set_1.intersection(set_2, set_3, set_4, set_5)}")
+    # logging.debug(f"Key[10][{key_pos}]={set_1.intersection(set_2, set_3, set_4, set_5)}")
     
     res = set_1.intersection(set_2, set_3, set_4, set_5)
     

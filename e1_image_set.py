@@ -29,13 +29,13 @@ def generate_mapping():
         try:
             # Ensure the input is a valid 8-bit number
             if x < 0 or x > 0xFF:
-                print("Please enter a valid 8-bit hexadecimal value (00 to FF).")
+                logging.debug("Please enter a valid 8-bit hexadecimal value (00 to FF).")
                 continue
             fx = gf_calculate(x)
             new_pair = (x, fx)
             list_of_pairs.append(new_pair)
         except ValueError:
-            print("Invalid input. Please enter a valid hexadecimal number.")
+            logging.debug("Invalid input. Please enter a valid hexadecimal number.")
     
     E1 = []
     for pair in list_of_pairs:

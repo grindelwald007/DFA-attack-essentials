@@ -1,0 +1,20 @@
+# Ignore all .log files
+*.log
+
+# Ignore the node_modules directory
+node_modules/
+
+# Ignore all .env files (environment variables)
+.env
+
+# Ignore specific file
+config/database.yml
+
+# Ignore all files in a folder except one
+keys/*
+logs/*
+!folder/keep.txt
+
+# Ignore everything in a directory but keep the directory
+directory/*
+!.gitkeep

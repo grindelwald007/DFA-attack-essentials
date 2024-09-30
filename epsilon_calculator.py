@@ -39,4 +39,4 @@ for i in range(0,4):
     binary_list = np.array(MatrixOperations.hex_to_binary_list(hex(multiplied_value))).reshape(8, 1)
     epsilon_prime = BinaryMatrix.custom_multiply(A, binary_list)
 
-    print(f"real epsilon prime : {epsilon_primes[i]} --->calculated epsilon_prime : {BinaryMatrix.bin_arr_to_hex(epsilon_prime)}")
+    logging.debug(f"real epsilon prime : {epsilon_primes[i]} --->calculated epsilon_prime : {BinaryMatrix.bin_arr_to_hex(epsilon_prime)}")

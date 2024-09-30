@@ -1,6 +1,21 @@
-import calculate_key_candidates as kc
-import faulty_aes_simulator as df
+import os, logging
 import numpy as np
+import calculate_key_candidates as kc, faulty_aes_simulator as df
+
+
+log_folder = 'logs'
+
+if not os.path.exists(log_folder):
+    os.makedirs(log_folder)
+
+log_file = os.path.join(log_folder, 'orchestrator.log')
+
+logging.basicConfig(
+    filename=log_file,
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
 
 def get_faulty_enc_state_value(faulty_enc_state, key_pos):
     if key_pos == 0:
@@ -89,11 +104,11 @@ def get_k_10_single_byte(fault_lists, key_pos):
     set_4 = set(list_4)
     set_5 = set(list_5)
 
-    # print(sorted(set_1))
-    # print(set_1.intersection(set_2))
-    # print(set_1.intersection(set_2, set_3))
-    # print(set_1.intersection(set_2, set_3, set_4))
-    print(f"Key[10][{key_pos}]={set_1.intersection(set_2, set_3, set_4, set_5)}")
+    # logging.debug(sorted(set_1))
+    # logging.debug(set_1.intersection(set_2))
+    # logging.debug(set_1.intersection(set_2, set_3))
+    # logging.debug(set_1.intersection(set_2, set_3, set_4))
+    logging.debug(f"Key[10][{key_pos}]={set_1.intersection(set_2, set_3, set_4, set_5)}")
     
     res = set_1.intersection(set_2, set_3, set_4, set_5)
     
@@ -105,25 +120,30 @@ def get_k_10_single_byte(fault_lists, key_pos):
     
 key_10 = np.empty((4, 4), dtype=object)
 
-key_10[0, 0] = get_k_10_single_byte([0x1e, 0xe1, 0xb3, 0x16, 0x9e], 0)
-key_10[1, 3] = get_k_10_single_byte([0x1e, 0xe1, 0xb3, 0x16, 0x9e], 7)
-key_10[2, 2] = get_k_10_single_byte([0x1e, 0xe1, 0xb3, 0x16, 0x9e], 10)
-key_10[3, 1] = get_k_10_single_byte([0x1e, 0xe1, 0xb3, 0x16, 0x9e], 13)
+FAULT_INJECTION_LIST = [0x1e, 0xe1, 0xb3, 0x16, 0x9e]
 
-key_10[0, 1] = get_k_10_single_byte([0x1e, 0xe1, 0xb3, 0x16, 0x9e], 1)
-key_10[1, 0] = get_k_10_single_byte([0x1e, 0xe1, 0xb3, 0x16, 0x9e], 4)
-key_10[2, 3] = get_k_10_single_byte([0x1e, 0xe1, 0xb3, 0x16, 0x9e], 11)
-key_10[3, 2] = get_k_10_single_byte([0x1e, 0xe1, 0xb3, 0x16, 0x9e], 14)
+key_10[0, 0] = get_k_10_single_byte(FAULT_INJECTION_LIST, 0)
+key_10[1, 3] = get_k_10_single_byte(FAULT_INJECTION_LIST, 7)
+key_10[2, 2] = get_k_10_single_byte(FAULT_INJECTION_LIST, 10)
+key_10[3, 1] = get_k_10_single_byte(FAULT_INJECTION_LIST, 13)
 
-key_10[0, 2] = get_k_10_single_byte([0x1e, 0xe1, 0xb3, 0x16, 0x9e], 2)
-key_10[1, 1] = get_k_10_single_byte([0x1e, 0xe1, 0xb3, 0x16, 0x9e], 5)
-key_10[2, 0] = get_k_10_single_byte([0x1e, 0xe1, 0xb3, 0x16, 0x9e], 8)
-key_10[3, 3] = get_k_10_single_byte([0x1e, 0xe1, 0xb3, 0x16, 0x9e], 15)
+key_10[0, 1] = get_k_10_single_byte(FAULT_INJECTION_LIST, 1)
+key_10[1, 0] = get_k_10_single_byte(FAULT_INJECTION_LIST, 4)
+key_10[2, 3] = get_k_10_single_byte(FAULT_INJECTION_LIST, 11)
+key_10[3, 2] = get_k_10_single_byte(FAULT_INJECTION_LIST, 14)
 
-key_10[0, 3] = get_k_10_single_byte([0x1e, 0xe1, 0xb3, 0x16, 0x9e], 3)
-key_10[1, 2] = get_k_10_single_byte([0x1e, 0xe1, 0xb3, 0x16, 0x9e], 6)
-key_10[2, 1] = get_k_10_single_byte([0x1e, 0xe1, 0xb3, 0x16, 0x9e], 9)
-key_10[3, 0] = get_k_10_single_byte([0x1e, 0xe1, 0xb3, 0x16, 0x9e], 12)
+key_10[0, 2] = get_k_10_single_byte(FAULT_INJECTION_LIST, 2)
+key_10[1, 1] = get_k_10_single_byte(FAULT_INJECTION_LIST, 5)
+key_10[2, 0] = get_k_10_single_byte(FAULT_INJECTION_LIST, 8)
+key_10[3, 3] = get_k_10_single_byte(FAULT_INJECTION_LIST, 15)
+
+key_10[0, 3] = get_k_10_single_byte(FAULT_INJECTION_LIST, 3)
+key_10[1, 2] = get_k_10_single_byte(FAULT_INJECTION_LIST, 6)
+key_10[2, 1] = get_k_10_single_byte(FAULT_INJECTION_LIST, 9)
+key_10[3, 0] = get_k_10_single_byte(FAULT_INJECTION_LIST, 12)
 
 
-print(f"key_10 \n{key_10}")
+logging.debug(f"key_10 \n{key_10}")
+
+with open('keys/Key_10.txt', 'w') as file:
+    file.write(str(key_10))

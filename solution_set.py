@@ -31,7 +31,7 @@ class MatrixOperations:
         self.binary_matrix = BinaryMatrix(A)
         self.E1 = list(set(E1))
         self.E1.remove('0x0')
-        # print(sorted([int(_, 16) for _ in self.E1]))
+        # logging.debug(sorted([int(_, 16) for _ in self.E1]))
     
     def get_e1_star_list(self):
         return self.E1
@@ -63,18 +63,18 @@ class MatrixOperations:
             if not is_identity:
                 raise ValueError("Error in A_INVERSE calculation")
             # else :
-                # print(f"Identity Matrix Success \n {identity_matrix}")
+                # logging.debug(f"Identity Matrix Success \n {identity_matrix}")
             # Multiply the inverse matrix with epsilon prime
             res_1 = BinaryMatrix.custom_multiply(a_inverse, np.array(epsilon_prime).reshape(8, 1))
             
             # Convert the result to integer and hexadecimal
             res_1_int, _ = BinaryMatrix.bin_arr_to_hex(res_1)
-            # print("(a_1*ε) in hex : ", _)
-            # print("(a_1*ε) in int : ", res_1_int)
+            # logging.debug("(a_1*ε) in hex : ", _)
+            # logging.debug("(a_1*ε) in int : ", res_1_int)
             
             # Perform the field multiplication
             res_2 = gf_mult(c, res_1_int)
-            # print(f"{c}.(a_1*{epsilon}) gmul : {hex(res_2)}")
+            # logging.debug(f"{c}.(a_1*{epsilon}) gmul : {hex(res_2)}")
             
             set_s = set()
             
@@ -82,12 +82,12 @@ class MatrixOperations:
                 res_3 = gf_mult(int(e, 16), res_2)
                 res_4 = gf_inverse(res_3)
                 set_s.add(hex(res_4))
-                # print(f"e : {e} | (c.(a_1*ε).e)_1 : {res_4}")
+                # logging.debug(f"e : {e} | (c.(a_1*ε).e)_1 : {res_4}")
                 
             return set_s
 
         except ValueError as e:
-            print(f"Error: {e}")
+            logging.debug(f"Error: {e}")
 
 
     @DeprecationWarning
@@ -98,7 +98,7 @@ class MatrixOperations:
             res_3 = gf_mult(int(e, 16), int(hex_num, 16))
             res_4 = gf_inverse(res_3)
             set_s.add(hex(res_4))
-            # print(f"e : {e} | (c.(a_1*ε).e)_1 : {res_4}")
+            # logging.debug(f"e : {e} | (c.(a_1*ε).e)_1 : {res_4}")
                 
         return set_s
     

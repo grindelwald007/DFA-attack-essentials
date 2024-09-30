@@ -53,7 +53,7 @@ def calculate_key_candidates(ep, f_nr_ai, i):
     intersection = set_1.intersection(set_2, set_3, set_4)
     s_intersec = sorted(intersection)
 
-    # print(f"s_intersec\n{s_intersec}\n") 
+    # logging.debug(f"s_intersec\n{s_intersec}\n") 
 
     result = []
     c = 2
@@ -77,7 +77,7 @@ def calculate_key_candidates(ep, f_nr_ai, i):
     res_1_int, _ = BinaryMatrix.bin_arr_to_hex(res_1)
     
     res_2 = gf_mult(c, res_1_int)
-    # print(f"{c}.(a_1*{ep_2}) gmul : {hex(res_2)}")
+    # logging.debug(f"{c}.(a_1*{ep_2}) gmul : {hex(res_2)}")
 
     for epsilon in s_intersec:
         # θ = ((a−1 ∗ε0).c.ε)−1 ∈ E∗
@@ -114,5 +114,5 @@ def calculate_key_candidates(ep, f_nr_ai, i):
                 res4 = s_c_epsilon ^ faulty_state_nr_a_i
                 result.append(hex(res4) if res4>=0x10 else f'0x{res4:02x}')
 
-    # print(f"final result : {sorted(result)}")
+    # logging.debug(f"final result : {sorted(result)}")
     return sorted(result)

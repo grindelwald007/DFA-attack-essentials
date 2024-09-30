@@ -1,6 +1,6 @@
 import os, logging
 import numpy as np
-from constants import S_BOX as s_box
+from constants import S_BOX as s_box, R_CON as rcon
 
 log_folder = 'logs'
 
@@ -18,27 +18,16 @@ logging.basicConfig(
 
 def read_array_from_file(filename):
     with open(filename, 'r') as file:
-        # Read the content and remove unwanted characters
         content = file.read().replace('[', '').replace(']', '').replace('\'', '').splitlines()
     
-    # Split each row and create a list of lists (2D array)
     data = [line.split() for line in content if line]
-    
-    # Convert the hex strings to integers if needed (can also keep them as hex strings)
     hex_data = [[int(val, 16) for val in row] for row in data]
 
-    # Convert it to a NumPy array
     array_2d = np.array(hex_data)
     
-    # Convert the array to column-major order 1D array (Fortran-like order)
     array_1d_col_major = array_2d.flatten(order='F')
     
     return array_1d_col_major
-
-# Rcon table for AES
-rcon = [
-    0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36
-]
 
 """Apply the S-Box substitution to a 4-byte word."""
 def sub_word(word):
@@ -86,14 +75,42 @@ def recover_key(final_key, Nk=4):
 
 
 # Column major order
-# final_key = [0xd0, 0x14, 0xf9, 0xa8, 0xc9, 0xee, 0x25, 0x89, 0xe1, 0x3f, 0x0c, 0xc8, 0xb6, 0x63, 0x0c, 0xa6]
+# final key = []
 
-
-
-final_key = read_array_from_file("Key_10.txt")
+final_key = read_array_from_file("keys/Key_10.txt")
 Nk = 4 
 expanded_key = recover_key(final_key, Nk)
 
 for i, word in enumerate(expanded_key):
     logging.debug(f"w[{i}]: " + ' '.join(f'{byte:02x}' for byte in word))
+    
+    
+    
+    
+def int_to_ascii(val):
+    try:
+        return chr(val)
+    except ValueError:
+        return '?'
 
+def traverse_column_major_and_convert_to_ascii(matrix):
+    num_cols = len(matrix[0])
+    num_rows = len(matrix)
+    
+    ascii_values = []
+    
+    for col in range(num_cols):
+        for row in range(num_rows):
+            hex_value = matrix[row][col]
+            ascii_char = int_to_ascii(hex_value)
+            ascii_values.append(ascii_char)
+    
+    return ascii_values
+
+
+key_0_ascii = traverse_column_major_and_convert_to_ascii([expanded_key[0], expanded_key[1], expanded_key[2], expanded_key[3]])
+
+logging.debug(f"AES-128 init key: {key_0_ascii}")
+
+with open('keys/Key_1.txt', 'w') as file:
+    file.write(str(key_0_ascii))

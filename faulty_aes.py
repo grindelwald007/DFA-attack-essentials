@@ -24,30 +24,32 @@ CORRECT_CIPHER_TEXT = np.array([
 
 #[List of (fault, fault_row, fault_col), faulty_state)]
 FAULT_TUPLE = [
-    ((0x1e, 0, 0), [[222, 2, 220, 25], [37, 220, 17, 59], [132, 9, 194, 11], [29, 98, 151, 50]]),
-    ((0xe1, 0, 0), (1, 1)),
-    ((0xb3, 0, 0), (1, 1)),
-    ((0x16, 0, 0), (1, 1)),
-    ((0x9e, 0, 0), (1, 1)),
-    
-    # ((0x1e, 0, 1), (1, 1)),
-    # ((0xe1, 0, 1), (1, 1)),
-    # ((0xb3, 0, 1), (1, 1)),
-    # ((0x16, 0, 1), (1, 1)),
-    # ((0x9e, 0, 1), (1, 1)),
-    
-    # ((0x1e, 0, 2), (1, 1)),
-    # ((0xe1, 0, 2), (1, 1)),
-    # ((0xb3, 0, 2), (1, 1)),
-    # ((0x16, 0, 2), (1, 1)),
-    # ((0x9e, 0, 2), (1, 1)),
-    
-    # ((0x1e, 0, 3), (1, 1)),
-    # ((0xe1, 0, 3), (1, 1)),
-    # ((0xb3, 0, 3), (1, 1)),
-    # ((0x16, 0, 3), (1, 1)),
-    # ((0x9e, 0, 3), (1, 1))
+    # ((0x1e, 0, 0), [[222, 2, 220, 25], [37, 220, 17, 59], [132, 9, 194, 11], [29, 98, 151, 50]])
 ]
+
+file_path = 'keys/fault_data.txt'
+
+def populate_fault_tuple():
+    with open(file_path, 'r') as file:
+        fault_tuple = None
+        matrix = []
+
+        i = 0
+        for line in file:
+            line = line.strip()
+            if i == 5 and fault_tuple and matrix:
+                FAULT_TUPLE.append((fault_tuple, matrix))
+                fault_tuple = None
+                matrix = []
+                i = 0
+        
+            if ',' in line:
+                fault_tuple = tuple(int(x, 16) if '0x' in x else int(x) for x in line.split(','))
+            else:
+                row = list(map(int, line.split()))
+                matrix.append(row)
+            i = i + 1
+    # print("FAULT_TUPLE =", FAULT_TUPLE)
 
 def search_by_fault_tuple(target_fault):
     for fault in FAULT_TUPLE:
@@ -57,6 +59,7 @@ def search_by_fault_tuple(target_fault):
 
 
 def get_differential_faults(fault, fault_row, fault_col):
+    populate_fault_tuple()
     target_fault_tuple = (fault, fault_row, fault_col)
     state_faulty = search_by_fault_tuple(target_fault_tuple)
 

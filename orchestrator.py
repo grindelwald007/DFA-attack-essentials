@@ -56,12 +56,9 @@ def get_faulty_enc_state_value(faulty_enc_state, key_pos):
 
 
 def calc_k_10_key_candidates(fault, key_pos, fault_col, fault_row = 0):
-    dif_fault_list, faulty_enc_state = df1.get_differential_faults(fault, fault_row, fault_col)
+    # dif_fault_list, faulty_enc_state = df1.get_differential_faults(fault, fault_row, fault_col)
     
-    logging.debug(f"{fault}, {fault_row}, {fault_col} ")
-    
-    # dif_fault_list, faulty_enc_state = df2.get_differential_faults(fault, 
-    # fault_row, fault_col)
+    dif_fault_list, faulty_enc_state = df2.get_differential_faults(fault, fault_row, fault_col)
     
     ep = ['00', '00', '00', '00']  # Initialize ep array with default values
 
@@ -149,8 +146,8 @@ key_10[1, 2] = get_k_10_single_byte(FAULT_INJECTION_LIST, 6)
 key_10[2, 1] = get_k_10_single_byte(FAULT_INJECTION_LIST, 9)
 key_10[3, 0] = get_k_10_single_byte(FAULT_INJECTION_LIST, 12)
 
-
 logging.debug(f"key_10 \n{key_10}")
+print(f"key_10 \n{key_10}")
 
 with open('keys/Key_10.txt', 'w') as file:
     file.write(str(key_10))

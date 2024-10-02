@@ -56,13 +56,15 @@ def recover_key(final_key, Nk=4):
         i = i - 1
         j = j - 1
     
-    i = Nb * (Nr+1) - Nk - 1
+    # i = Nb * (Nr+1) - Nk - 1
     
     while i >= 0:
         temp = w[i + Nk -1]
         
         if i % Nk == 0:
-            temp = xor_words(sub_word(rot_word(temp)), [rcon[i//(Nk+1)], 0x0, 0x0, 0x0])
+            # print(f"i {i} Nk+1 {Nk+1} i//(Nk+1) {i//Nk} rcon[] {hex(rcon[i//Nk])}")
+            # print(f"i {i} Nk+1 {Nk+1} i//(Nk+1) {i//(Nk+1)} i//Nk+1 {i//Nk+1}")
+            temp = xor_words(sub_word(rot_word(temp)), [rcon[i//Nk], 0x0, 0x0, 0x0])
         elif Nk > 6 and i % Nk == 4:
             temp = sub_word(temp)
             
@@ -85,8 +87,6 @@ for i, word in enumerate(expanded_key):
     logging.debug(f"w[{i}]: " + ' '.join(f'{byte:02x}' for byte in word))
     
     
-    
-    
 def int_to_ascii(val):
     try:
         return chr(val)
@@ -99,11 +99,13 @@ def traverse_column_major_and_convert_to_ascii(matrix):
     
     ascii_values = []
     
-    for col in range(num_cols):
-        for row in range(num_rows):
+    for row in range(num_rows):
+        for col in range(num_cols):
             hex_value = matrix[row][col]
-            ascii_char = int_to_ascii(hex_value)
-            ascii_values.append(ascii_char)
+            # ascii_char = int_to_ascii(hex_value)
+            # ascii_values.append(ascii_char)
+            ascii_values.append(hex(hex_value))
+            
     
     return ascii_values
 

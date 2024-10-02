@@ -112,7 +112,7 @@ def traverse_column_major_and_convert_to_ascii(matrix):
 
 key_0_ascii = traverse_column_major_and_convert_to_ascii([expanded_key[0], expanded_key[1], expanded_key[2], expanded_key[3]])
 
-logging.debug(f"AES-128 init key: {key_0_ascii}")
+logging.debug(f"AES-128 key in Col Major Order:\n {key_0_ascii}")
 
 with open('keys/Key_1.txt', 'w') as file:
     file.write(str(key_0_ascii))
